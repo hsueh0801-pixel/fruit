@@ -1,0 +1,1101 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>生鮮蔬果小鋪</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    body {
+      background-color: #fbfbf9;
+      color: #333;
+    }
+
+    /* 頂部導覽列：紅、綠、黃 三色漸層 */
+    header {
+      background: linear-gradient(135deg, #e63946 0%, #2a9d8f 50%, #e9c46a 100%);
+      color: white;
+      padding: 20px 20px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      border-bottom: 4px solid #2a9d8f;
+    }
+
+    .header-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo-area h1 {
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .logo-area p {
+      font-size: 13px;
+      opacity: 0.95;
+      margin-top: 4px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .cart-btn {
+      background: white;
+      color: #333;
+      border: 2px solid #2a9d8f;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      transition: all 0.2s;
+    }
+
+    .cart-btn:hover {
+      background: #f0fdf4;
+      transform: scale(1.03);
+    }
+
+    .badge {
+      background-color: #e63946;
+      color: white;
+      border-radius: 50%;
+      padding: 2px 7px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* ================= 頁首 5 圖輪播橫框 ================= */
+    .banner-carousel-wrapper {
+      max-width: 1200px;
+      margin: 20px auto 0;
+      padding: 0 20px;
+      position: relative;
+    }
+
+    .banner-carousel-box {
+      background: white;
+      border: 3px solid #2a9d8f;
+      border-radius: 14px;
+      padding: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+      position: relative;
+    }
+
+    .banner-track-container {
+      overflow: hidden;
+      width: 100%;
+    }
+
+    .banner-track {
+      display: flex;
+      gap: 12px;
+      transition: transform 0.45s ease-in-out;
+    }
+
+    .banner-img-item {
+      flex: 0 0 calc((100% - 48px) / 5); /* 寬度均分為 5 張圖，扣除 4 個間距 */
+      height: 140px;
+      border-radius: 10px;
+      overflow: hidden;
+      background-color: #f2f2f2;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      position: relative;
+    }
+
+    .banner-img-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.3s ease;
+    }
+
+    .banner-img-item:hover img {
+      transform: scale(1.06);
+    }
+
+    /* 輪播左右手動切換按鈕 */
+    .carousel-nav-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      background: rgba(255, 255, 255, 0.9);
+      border: 2px solid #2a9d8f;
+      border-radius: 50%;
+      font-size: 16px;
+      font-weight: bold;
+      color: #2a9d8f;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+      transition: all 0.2s;
+    }
+
+    .carousel-nav-btn:hover {
+      background: #2a9d8f;
+      color: white;
+    }
+
+    .carousel-prev {
+      left: 28px;
+    }
+
+    .carousel-next {
+      right: 28px;
+    }
+
+    /* 分類標籤列（紅、綠、黃） */
+    .filter-section {
+      max-width: 1200px;
+      margin: 22px auto 16px;
+      padding: 0 20px;
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .filter-btn {
+      background: white;
+      padding: 9px 24px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      border-radius: 25px;
+      transition: all 0.25s;
+    }
+
+    /* 1: 紅色按鈕 */
+    .filter-btn:nth-child(1) {
+      border: 2.5px solid #e63946;
+      color: #e63946;
+    }
+    .filter-btn:nth-child(1).active {
+      background: #e63946;
+      color: white;
+    }
+
+    /* 2: 綠色按鈕 */
+    .filter-btn:nth-child(2) {
+      border: 2.5px solid #2a9d8f;
+      color: #2a9d8f;
+    }
+    .filter-btn:nth-child(2).active {
+      background: #2a9d8f;
+      color: white;
+    }
+
+    /* 3: 黃色按鈕 */
+    .filter-btn:nth-child(3) {
+      border: 2.5px solid #d4a017;
+      color: #996e00;
+    }
+    .filter-btn:nth-child(3).active {
+      background: #e9c46a;
+      color: #4a3400;
+    }
+
+    /* 商品列表網格 */
+    .products-grid {
+      max-width: 1200px;
+      margin: 0 auto 50px;
+      padding: 0 20px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 22px;
+    }
+
+    /* 商品卡片基礎樣式 */
+    .product-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+
+    /* 規律三色邊框 */
+    .product-card.theme-red {
+      border: 2.5px solid #e63946;
+    }
+    .product-card.theme-red:hover {
+      box-shadow: 0 8px 20px rgba(230, 57, 70, 0.2);
+    }
+    .product-card.theme-red .tag {
+      background: #ffebee;
+      color: #d32f2f;
+      border: 1px solid #ffcdd2;
+    }
+    .product-card.theme-red .price {
+      color: #e63946;
+    }
+    .product-card.theme-red .btn-add {
+      background: #e63946;
+    }
+
+    .product-card.theme-green {
+      border: 2.5px solid #2a9d8f;
+    }
+    .product-card.theme-green:hover {
+      box-shadow: 0 8px 20px rgba(42, 157, 143, 0.22);
+    }
+    .product-card.theme-green .tag {
+      background: #e6f7f4;
+      color: #1e7066;
+      border: 1px solid #b2dfdb;
+    }
+    .product-card.theme-green .price {
+      color: #2a9d8f;
+    }
+    .product-card.theme-green .btn-add {
+      background: #2a9d8f;
+    }
+
+    .product-card.theme-yellow {
+      border: 2.5px solid #e9c46a;
+    }
+    .product-card.theme-yellow:hover {
+      box-shadow: 0 8px 20px rgba(233, 196, 106, 0.35);
+    }
+    .product-card.theme-yellow .tag {
+      background: #fff9e6;
+      color: #926b05;
+      border: 1px solid #ffe599;
+    }
+    .product-card.theme-yellow .price {
+      color: #b38304;
+    }
+    .product-card.theme-yellow .btn-add {
+      background: #e9c46a;
+      color: #3b2a00;
+    }
+
+    .product-img {
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      background-color: #f2f2f2;
+    }
+
+    .product-info {
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .product-title {
+      font-size: 15px;
+      font-weight: bold;
+      color: #222;
+      margin-bottom: 6px;
+    }
+
+    .tags {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-weight: 500;
+    }
+
+    .product-desc {
+      font-size: 12px;
+      color: #666;
+      line-height: 1.45;
+      margin-bottom: 14px;
+      flex-grow: 1;
+    }
+
+    .product-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px dashed #e8e8e8;
+      padding-top: 10px;
+    }
+
+    .price {
+      font-size: 16px;
+      font-weight: bold;
+    }
+
+    .card-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .btn-detail {
+      background: #f7f7f7;
+      border: 1px solid #ddd;
+      color: #666;
+      padding: 5px 10px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .btn-add {
+      border: none;
+      color: white;
+      padding: 5px 14px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.15s;
+    }
+
+    .btn-add:hover {
+      opacity: 0.88;
+      transform: scale(1.05);
+    }
+
+    /* 購物車彈窗樣式 */
+    .cart-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.45);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .cart-modal {
+      background: white;
+      width: 90%;
+      max-width: 550px;
+      max-height: 80vh;
+      border-radius: 12px;
+      border: 3px solid #2a9d8f;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    }
+
+    .cart-modal-header {
+      padding: 16px 20px;
+      border-bottom: 2px dashed #f0f0f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+    }
+
+    .cart-modal-header h2 {
+      font-size: 18px;
+      background: linear-gradient(90deg, #e63946, #2a9d8f);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .close-btn {
+      background: none;
+      border: none;
+      font-size: 26px;
+      color: #888;
+      cursor: pointer;
+    }
+
+    .cart-items-container {
+      padding: 16px 20px;
+      overflow-y: auto;
+      flex-grow: 1;
+    }
+
+    .cart-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f2f2f2;
+    }
+
+    .cart-item-img {
+      width: 60px;
+      height: 60px;
+      border-radius: 6px;
+      object-fit: cover;
+      border: 1.5px solid #2a9d8f;
+    }
+
+    .cart-item-info {
+      flex-grow: 1;
+    }
+
+    .cart-item-name {
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .cart-item-price {
+      font-size: 13px;
+      color: #e63946;
+      margin-top: 4px;
+      font-weight: bold;
+    }
+
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .quantity-btn {
+      background: #f5f5f5;
+      border: 1px solid #ddd;
+      width: 26px;
+      height: 26px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .cart-modal-footer {
+      padding: 16px 20px;
+      border-top: 2px dashed #f0f0f0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fafafa;
+    }
+
+    .total-price {
+      font-size: 17px;
+      font-weight: bold;
+      color: #222;
+    }
+
+    .total-price span {
+      color: #e63946;
+    }
+
+    .checkout-btn {
+      background: linear-gradient(135deg, #e63946, #2a9d8f);
+      color: white;
+      border: none;
+      padding: 9px 20px;
+      border-radius: 6px;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(42, 157, 143, 0.3);
+      transition: opacity 0.2s;
+    }
+
+    .checkout-btn:hover {
+      opacity: 0.9;
+    }
+
+    .empty-cart-text {
+      text-align: center;
+      padding: 30px 0;
+      color: #999;
+    }
+
+    /* 手機平板響應式調整 */
+    @media (max-width: 768px) {
+      .banner-img-item {
+        flex: 0 0 calc((100% - 24px) / 3); /* 手機端自動改為展示 3 張 */
+        height: 100px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 頂部 Header -->
+  <header>
+    <div class="header-container">
+      <div class="logo-area">
+        <h1>🍎 生鮮蔬果小鋪</h1>
+        <p>在地小農新鮮直送，三色鮮享安心健康</p>
+      </div>
+      <button class="cart-btn" onclick="openCart()">
+        🛒 購物車 <span class="badge" id="cartBadge">0</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- 頁首 5 圖自動輪播橫框 -->
+  <section class="banner-carousel-wrapper">
+    <button class="carousel-nav-btn carousel-prev" onclick="prevSlide()">&#10094;</button>
+    <div class="banner-carousel-box" id="carouselBox">
+      <div class="banner-track-container">
+        <div class="banner-track" id="bannerTrack">
+          <!-- 圖片由 JavaScript 動態填入 -->
+        </div>
+      </div>
+    </div>
+    <button class="carousel-nav-btn carousel-next" onclick="nextSlide()">&#10095;</button>
+  </section>
+
+  <!-- 分類篩選按鈕（紅、綠、黃） -->
+  <div class="filter-section">
+    <button class="filter-btn active" onclick="filterItems('all', this)">田 全部食品 (30)</button>
+    <button class="filter-btn" onclick="filterItems('veg', this)">🥬 新鮮蔬菜 (15)</button>
+    <button class="filter-btn" onclick="filterItems('fruit', this)">🍎 當令水果 (15)</button>
+  </div>
+
+  <!-- 商品網格 -->
+  <main class="products-grid" id="productContainer"></main>
+
+  <!-- 購物車彈窗 -->
+  <div class="cart-modal-overlay" id="cartOverlay">
+    <div class="cart-modal">
+      <div class="cart-modal-header">
+        <h2>已選購商品</h2>
+        <button class="close-btn" onclick="closeCart()">&times;</button>
+      </div>
+      
+      <div class="cart-items-container" id="cartItemsList"></div>
+
+      <div class="cart-modal-footer">
+        <div class="total-price">
+          總計：<span id="cartTotalPrice">NT$ 0</span>
+        </div>
+        <button class="checkout-btn" onclick="alert('感謝您的訂購！訂單已送出。')">前往結帳</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const FALLBACK_VEG = "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&auto=format&fit=crop&q=80";
+    const FALLBACK_FRUIT = "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=600&auto=format&fit=crop&q=80";
+
+    // 蔬果品項清單（蔬菜15項 + 水果15項，共30項）
+    const products = [
+      /* 蔬菜 15 項 */
+      {
+        id: 1,
+        category: "veg",
+        name: "高山有機胡蘿蔔",
+        tags: ["蔬菜", "有機"],
+        desc: "來自高山純淨水質灌溉，口感爽脆清甜，清炒或煮湯皆十分美味。",
+        price: 85,
+        image: "https://images.unsplash.com/photo-1598170845058-32b9d6a5da37?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 2,
+        category: "veg",
+        name: "有機水耕溫室水菜",
+        tags: ["蔬菜", "水耕"],
+        desc: "無農藥水耕細心栽培，清爽鮮嫩無苦味，適合製作生菜沙拉與輕食。",
+        price: 90,
+        image: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 3,
+        category: "veg",
+        name: "綠寶石有機青花菜",
+        tags: ["蔬菜", "無農藥"],
+        desc: "當日晨採新鮮脆嫩，富含膳食纖維與多種維生素，健康養生首選。",
+        price: 75,
+        image: "https://images.unsplash.com/photo-1584270354949-c26b0d5b4a0c?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 4,
+        category: "veg",
+        name: "產銷履歷牛番茄 (4入)",
+        tags: ["蔬菜", "料理必備"],
+        desc: "果形飽滿厚實，酸甜適中，燉湯、炒蛋、製作義大利麵醬汁風味極佳。",
+        price: 70,
+        image: "https://images.unsplash.com/photo-1592924357228-91a4daadcfea?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 5,
+        category: "veg",
+        name: "恆春半島洋蔥 (袋裝)",
+        tags: ["蔬菜", "甘甜耐放"],
+        desc: "落山風吹拂淬鍊出的極致鮮甜，辛味溫和水分充足，適合各式家常料理。",
+        price: 60,
+        image: "https://images.unsplash.com/photo-1508747703725-719777637510?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 6,
+        category: "veg",
+        name: "高山初秋高麗菜 (一顆)",
+        tags: ["蔬菜", "爽脆清甜"],
+        desc: "高海拔冷涼氣候生長，葉片層次分明，甘甜多汁，清脆可口。",
+        price: 95,
+        image: "https://images.unsplash.com/photo-1594282486552-05b4d80fbb9f?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 7,
+        category: "veg",
+        name: "溫室鮮嫩小黃瓜 (500g)",
+        tags: ["蔬菜", "涼拌首選"],
+        desc: "清脆爽口，瓜香怡人，生吃清爽解膩，涼拌醃漬更添風味。",
+        price: 65,
+        image: "https://images.unsplash.com/photo-1604977042946-1eecc30f269e?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 8,
+        category: "veg",
+        name: "嫩葉菠菜 (一把)",
+        tags: ["蔬菜", "高鐵高纖"],
+        desc: "當令鮮嫩菠菜，葉片翠綠厚實，富含豐富鐵質與葉酸，營養滿分。",
+        price: 50,
+        image: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 9,
+        category: "veg",
+        name: "埔里有機新鮮香菇 (盒裝)",
+        tags: ["蔬菜", "蕈菇濃郁"],
+        desc: "埔里純淨山泉水栽培，蕈傘厚實飽滿，香氣濃郁，炒菜煮湯皆適宜。",
+        price: 80,
+        image: "https://images.unsplash.com/photo-1509358271058-acd22cc93898?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 10,
+        category: "veg",
+        name: "台灣紫晶茄子 (3條入)",
+        tags: ["蔬菜", "軟嫩多汁"],
+        desc: "外皮深紫油亮，果肉潔白細緻，紅燒、醬炒或油炸口感軟綿香甜。",
+        price: 55,
+        image: "https://images.unsplash.com/photo-1615485500704-8e990f9900f7?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 11,
+        category: "veg",
+        name: "精選有機馬鈴薯 (袋裝)",
+        tags: ["蔬菜", "綿密鬆軟"],
+        desc: "無生長激素自然熟成，澱粉質豐富，燉肉、咖哩或做成薯泥鬆軟香濃。",
+        price: 68,
+        image: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 12,
+        category: "veg",
+        name: "產地直送甜玉米 (3支裝)",
+        tags: ["蔬菜", "粒粒爆汁"],
+        desc: "顆粒飽滿金黃，自然鮮甜無比，清蒸或煮湯皆散發天然甘甜香氣。",
+        price: 75,
+        image: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 13,
+        category: "veg",
+        name: "鮮脆西芹 (袋裝)",
+        tags: ["蔬菜", "高纖低卡"],
+        desc: "水分飽滿纖維細緻，清爽爽脆，非常適合搭配沙拉、鮮榨蔬果汁與炒肉片。",
+        price: 65,
+        image: "https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 14,
+        category: "veg",
+        name: "紅黃彩椒組合 (2入)",
+        tags: ["蔬菜", "維他命C"],
+        desc: "色澤鮮豔厚實，多汁甘甜無草青味，沙拉生食或快炒色彩繽紛又美味。",
+        price: 85,
+        image: "https://images.unsplash.com/photo-1563565375-f3fdfdbefa83?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 15,
+        category: "veg",
+        name: "栗子南瓜 (切半/約800g)",
+        tags: ["蔬菜", "栗香濃郁"],
+        desc: "果肉細緻綿密如栗子，天然甜度高，蒸熟即可享用，亦適合南瓜濃湯。",
+        price: 90,
+        image: "https://images.unsplash.com/photo-1570586437263-ab629fccc818?w=600&auto=format&fit=crop&q=80"
+      },
+
+      /* 水果 15 項 */
+      {
+        id: 16,
+        category: "fruit",
+        name: "玉女小番茄 (盒裝 600g)",
+        tags: ["水果", "優質"],
+        desc: "皮薄多汁，甜度高達10度以上，產地溫室自然熟成採收，新鮮天然。",
+        price: 150,
+        image: "https://images.unsplash.com/photo-1546470427-e26264be0b11?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 17,
+        category: "fruit",
+        name: "愛文芒果 (頂級特選 2顆裝)",
+        tags: ["水果", "當季限定"],
+        desc: "滿滿屏東豔陽日照熟成，果肉細緻滑嫩，香氣濃郁，夏日必嚐滋味。",
+        price: 180,
+        image: "https://images.unsplash.com/photo-1553279768-865429fa0078?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 18,
+        category: "fruit",
+        name: "產地直送金鑽鳳梨",
+        tags: ["水果", "外銷等級"],
+        desc: "果肉金黃細緻，汁多味甜不咬舌，富含天然鳳梨酵素與維生素。",
+        price: 120,
+        image: "https://images.unsplash.com/photo-1550258987-190a2d41a8ba?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 19,
+        category: "fruit",
+        name: "特選青森蜜富士蘋果 (4入)",
+        tags: ["水果", "進口脆甜"],
+        desc: "果皮光鮮紅潤，果肉脆口多汁，含有天然蜜腺，香甜可口。",
+        price: 240,
+        image: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 20,
+        category: "fruit",
+        name: "南投旗山香蕉 (一串)",
+        tags: ["水果", "香濃軟糯"],
+        desc: "香氣飽滿濃郁，口感綿密扎實，迅速補充天然能量的最佳水果。",
+        price: 65,
+        image: "https://images.unsplash.com/photo-1571771894821-ce9b6c11b08e?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 21,
+        category: "fruit",
+        name: "紐西蘭陽光金圓頭奇異果 (3入)",
+        tags: ["水果", "富含維C"],
+        desc: "金黃翠綠果肉甘甜多汁，微酸甜平衡，每日補充維他命 C 的最佳天然來源。",
+        price: 99,
+        image: "./Golden.png"
+      },
+      {
+        id: 22,
+        category: "fruit",
+        name: "特級巨峰葡萄 (串裝 500g)",
+        tags: ["水果", "果香濃郁"],
+        desc: "果實飽滿如黑珍珠，果霜厚實天然，果肉緊實多汁，甜度迷人。",
+        price: 160,
+        image: "https://images.unsplash.com/photo-1537640538966-79f369143f8f?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 23,
+        category: "fruit",
+        name: "燕巢特選珍珠芭樂 (3入)",
+        tags: ["水果", "甘脆回甘"],
+        desc: "果肉爽脆扎實，甘甜回甘，維生素 C 含量冠絕群果，低糖健康零負擔。",
+        price: 85,
+        image: "https://images.unsplash.com/photo-1536511135899-73894e772e39?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 24,
+        category: "fruit",
+        name: "大湖產地直送草莓 (盒裝)",
+        tags: ["水果", "酸甜初戀"],
+        desc: "鮮紅嬌豔香氣撲鼻，果實鮮嫩多汁，酸甜恰到好處，冬春極致限定美味。",
+        price: 220,
+        image: "https://images.unsplash.com/photo-1464965911861-746a04b4bca6?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 25,
+        category: "fruit",
+        name: "花蓮玉里大西瓜 (切塊盒裝)",
+        tags: ["水果", "消暑解渴"],
+        desc: "沙質土壤孕育出的沙甜口感，水分極度飽滿，冰鎮後享用清涼無比。",
+        price: 90,
+        image: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 26,
+        category: "fruit",
+        name: "加州進口藍莓 (盒裝 125g)",
+        tags: ["水果", "花青素之王"],
+        desc: "果粒圓潤飽滿裹著細緻果霜，香甜多汁，富含極佳天然抗氧化花青素。",
+        price: 110,
+        image: "https://images.unsplash.com/photo-1498557850523-fd3d118b962e?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 27,
+        category: "fruit",
+        name: "特級紅心火龍果 (2入)",
+        tags: ["水果", "高纖甜潤"],
+        desc: "鮮豔紫紅果肉，甜度高且帶有溫潤清香，富含天然甜菜紅素與水溶性纖維。",
+        price: 110,
+        image: "https://images.unsplash.com/photo-1527325678964-54921661f888?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 28,
+        category: "fruit",
+        name: "麻豆文旦老欉柚子 (2入)",
+        tags: ["水果", "肉嫩多汁"],
+        desc: "老欉樹齡孕育出細緻晶瑩果肉，甘甜帶有幽雅清香，秋節首選甘美水果。",
+        price: 130,
+        image: "https://images.unsplash.com/photo-1582284540020-8acbe03f4924?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 29,
+        category: "fruit",
+        name: "東勢高接新興梨 (2入)",
+        tags: ["水果", "水潤清脆"],
+        desc: "果形碩大端正，果肉白嫩細緻、水分極多且脆甜可口，清涼潤喉最佳水果。",
+        price: 140,
+        image: "https://images.unsplash.com/photo-1514756331096-242fdeb70d4a?w=600&auto=format&fit=crop&q=80"
+      },
+      {
+        id: 30,
+        category: "fruit",
+        name: "頂級酪梨 (牛油果 2入)",
+        tags: ["水果", "森林奶油"],
+        desc: "質地滑順綿密如奶油，富含優質單元不飽和脂肪酸，製作沙拉三明治聖品。",
+        price: 160,
+        image: "https://images.unsplash.com/photo-1523049673857-eb18f1d7b578?w=600&auto=format&fit=crop&q=80"
+      }
+    ];
+
+    let cart = {};
+
+    /* ================= 頁首輪播控制邏輯 ================= */
+    let currentSlide = 0;
+    let autoPlayTimer = null;
+    const allImages = products.map(p => ({
+      image: p.image,
+      fallback: p.category === 'veg' ? FALLBACK_VEG : FALLBACK_FRUIT
+    }));
+
+    function initCarousel() {
+      const track = document.getElementById("bannerTrack");
+      // 串接兩份清單以保證平滑連續輪播
+      const duplicatedList = [...allImages, ...allImages];
+      track.innerHTML = duplicatedList.map(item => `
+        <div class="banner-img-item">
+          <img src="${item.image}" loading="lazy" onerror="this.onerror=null; this.src='${item.fallback}';">
+        </div>
+      `).join('');
+
+      startAutoPlay();
+
+      // 滑鼠懸停時暫停自動播放，移開時繼續
+      const box = document.getElementById("carouselBox");
+      box.addEventListener("mouseenter", stopAutoPlay);
+      box.addEventListener("mouseleave", startAutoPlay);
+    }
+
+    function updateCarouselPosition() {
+      const track = document.getElementById("bannerTrack");
+      const firstItem = track.querySelector(".banner-img-item");
+      if (!firstItem) return;
+      
+      const itemWidth = firstItem.offsetWidth + 12; // 寬度加上間隙 12px
+      track.style.transform = `translateX(-${currentSlide * itemWidth}px)`;
+
+      // 循環回到開頭
+      if (currentSlide >= allImages.length) {
+        setTimeout(() => {
+          track.style.transition = 'none';
+          currentSlide = 0;
+          track.style.transform = `translateX(0px)`;
+          setTimeout(() => {
+            track.style.transition = 'transform 0.45s ease-in-out';
+          }, 50);
+        }, 460);
+      }
+    }
+
+    function nextSlide() {
+      currentSlide++;
+      updateCarouselPosition();
+    }
+
+    function prevSlide() {
+      if (currentSlide <= 0) {
+        currentSlide = allImages.length - 1;
+      } else {
+        currentSlide--;
+      }
+      updateCarouselPosition();
+    }
+
+    function startAutoPlay() {
+      stopAutoPlay();
+      autoPlayTimer = setInterval(nextSlide, 2500); // 每 2.5 秒輪替一次
+    }
+
+    function stopAutoPlay() {
+      if (autoPlayTimer) clearInterval(autoPlayTimer);
+    }
+
+    /* ================= 商品列表渲染 ================= */
+    function renderProducts(items) {
+      const container = document.getElementById("productContainer");
+      const colorThemes = ['theme-red', 'theme-green', 'theme-yellow'];
+
+      container.innerHTML = items.map((item, index) => {
+        const theme = colorThemes[index % 3];
+        const fallback = item.category === 'veg' ? FALLBACK_VEG : FALLBACK_FRUIT;
+
+        return `
+          <div class="product-card ${theme}">
+            <img src="${item.image}" alt="${item.name}" class="product-img" loading="lazy" onerror="this.onerror=null; this.src='${fallback}';">
+            <div class="product-info">
+              <h3 class="product-title">${item.name}</h3>
+              <div class="tags">
+                ${item.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+              </div>
+              <p class="product-desc">${item.desc}</p>
+              <div class="product-footer">
+                <span class="price">NT$ ${item.price}</span>
+                <div class="card-actions">
+                  <button class="btn-detail" onclick="alert('${item.name}：${item.desc}')">詳細</button>
+                  <button class="btn-add" onclick="addToCart(${item.id})">加購</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 分類篩選
+    function filterItems(category, btn) {
+      document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      if (category === "all") {
+        renderProducts(products);
+      } else {
+        const filtered = products.filter(p => p.category === category);
+        renderProducts(filtered);
+      }
+    }
+
+    // 加入購物車
+    function addToCart(productId) {
+      if (cart[productId]) {
+        cart[productId]++;
+      } else {
+        cart[productId] = 1;
+      }
+      updateCartBadge();
+    }
+
+    // 增減數量
+    function changeQuantity(productId, delta) {
+      if (cart[productId]) {
+        cart[productId] += delta;
+        if (cart[productId] <= 0) {
+          delete cart[productId];
+        }
+      }
+      updateCartBadge();
+      renderCartItems();
+    }
+
+    // 更新數量徽章
+    function updateCartBadge() {
+      const totalCount = Object.values(cart).reduce((sum, qty) => sum + qty, 0);
+      document.getElementById("cartBadge").innerText = totalCount;
+    }
+
+    // 開啟購物車彈窗
+    function openCart() {
+      renderCartItems();
+      document.getElementById("cartOverlay").style.display = "flex";
+    }
+
+    // 關閉購物車彈窗
+    function closeCart() {
+      document.getElementById("cartOverlay").style.display = "none";
+    }
+
+    // 點擊空白處關閉
+    window.onclick = function(event) {
+      const modal = document.getElementById("cartOverlay");
+      if (event.target === modal) {
+        closeCart();
+      }
+    };
+
+    // 渲染購物車內品項
+    function renderCartItems() {
+      const container = document.getElementById("cartItemsList");
+      const cartKeys = Object.keys(cart);
+
+      if (cartKeys.length === 0) {
+        container.innerHTML = '<div class="empty-cart-text">購物車目前是空的，快去選購新鮮蔬果吧！</div>';
+        document.getElementById("cartTotalPrice").innerText = "NT$ 0";
+        return;
+      }
+
+      let totalAmount = 0;
+      let html = "";
+
+      cartKeys.forEach(id => {
+        const product = products.find(p => p.id === parseInt(id));
+        const quantity = cart[id];
+        const subtotal = product.price * quantity;
+        const fallback = product.category === 'veg' ? FALLBACK_VEG : FALLBACK_FRUIT;
+        totalAmount += subtotal;
+
+        html += `
+          <div class="cart-item">
+            <img src="${product.image}" alt="${product.name}" class="cart-item-img" onerror="this.onerror=null; this.src='${fallback}';">
+            <div class="cart-item-info">
+              <div class="cart-item-name">${product.name}</div>
+              <div class="cart-item-price">NT$ ${product.price} × ${quantity} = NT$ ${subtotal}</div>
+            </div>
+            <div class="quantity-control">
+              <button class="quantity-btn" onclick="changeQuantity(${product.id}, -1)">-</button>
+              <span>${quantity}</span>
+              <button class="quantity-btn" onclick="changeQuantity(${product.id}, 1)">+</button>
+            </div>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+      document.getElementById("cartTotalPrice").innerText = `NT$ ${totalAmount}`;
+    }
+
+    // 頁面初始化
+    window.onload = function() {
+      initCarousel();
+      renderProducts(products);
+    };
+
+    // 視窗大小改變時校正輪播距離
+    window.onresize = function() {
+      updateCarouselPosition();
+    };
+  </script>
+</body>
+</html>
